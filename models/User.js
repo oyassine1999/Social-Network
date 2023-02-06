@@ -1,39 +1,36 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true
+const userSchema = new Schema(
+  {
+    username: { type: String, required: true, unique: true, trim: true },
+    email: { type: String, required: true, unique: true, match: /.+\@.+\..+/ },
+    thoughts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Thought",
+      },
+    ],
+    //arr referncing Thought model
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    match: /^\S+@\S+\.\S+$/
-  },
-  thoughts: [{
-    type: mongoose.Types.ObjectId,
-    ref: 'Thought'
-  }],
-  friends: [{
-    type: mongoose.Types.ObjectId,
-    ref: 'User'
-  }]
-}, {
-  toJSON: {
-    virtuals: true
-  },
-  id: false
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
+);
+
+//virtual friendCount to retrieve length of users friends
+userSchema.virtual("friendCount").get(function () {
+  return `${this.friends.length}`;
 });
 
-userSchema.virtual('friendCount', {
-  ref: 'User',
-  localField: '_id',
-  foreignField: 'friends',
-  count: true
-});
+//Initialize the User model
+const User = model("User", userSchema);
 
-const User = mongoose.model('User', userSchema);
 module.exports = User;
