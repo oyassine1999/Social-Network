@@ -1,5 +1,6 @@
 const router = require("express").Router();
 
+// Importing controller functions using object destructuring
 const {
   getUsers,
   getSingleUser,
@@ -10,13 +11,13 @@ const {
   removeUserFriend,
 } = require("../../controllers/usersController");
 
-// /api/users
+// Route for getting all users and creating a new user
 router.route("/").get(getUsers).post(createUser);
 
-// /api/users/:userId
+// Route for getting a single user, updating a user, and deleting a user
 router.route("/:userId").get(getSingleUser).put(updateUser).delete(deleteUser);
 
-// /api/users/:userId/friends/:friendId
+// Route for adding a friend to a user and removing a friend from a user
 router
   .route("/:userId/friends/:friendId")
   .post(addUserFriend)
